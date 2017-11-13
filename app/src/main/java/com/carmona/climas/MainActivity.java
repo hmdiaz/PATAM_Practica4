@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private static final String units="metric";
     private static final String lang="es";
 
+    private TextView txt_city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
         climas = new ArrayList<com.carmona.climas.List>();
         city = "";
+        txt_city = (TextView) findViewById(R.id.txt_city);
         if(!runtime_permissions()) {
 
             getGeoLocation();
@@ -229,6 +232,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             List<com.carmona.climas.List> climasList = (List<com.carmona.climas.List>) response.body().getList();
 
             city = response.body().getCity().getName();
+
+            txt_city.setText("Clima en: "+city);
 
             climas.clear();
 
