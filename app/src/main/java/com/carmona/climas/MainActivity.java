@@ -1,18 +1,23 @@
 package com.carmona.climas;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LocationListener{
@@ -51,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.itmUbicacion:
-
+                    aboutDialog();
                 break;
             case R.id.itmOtro:
                 break;
@@ -110,6 +115,36 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
                 runtime_permissions();
             }
         }
+    }
+
+    private void aboutDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Climita");
+        final WebView webView = new WebView(this);
+        String about = "<p>Early Access :u </p>" +
+                "<p>Practica 4: Climas</p>" +
+                "<p>Desarrollada por Carmona</a></p>" +
+                "<p>Bandido Studios</a>";
+        TypedArray ta = obtainStyledAttributes(new int[]{android.R.attr.textColorPrimary, R.attr.colorAccent});
+        String textColor = String.format("#%06X", (0xFFFFFF & ta.getColor(0, Color.BLACK)));
+        String accentColor = String.format("#%06X", (0xFFFFFF & ta.getColor(1, Color.BLUE)));
+        ta.recycle();
+        about = "<style media=\"screen\" type=\"text/css\">" +
+                "body {\n" +
+                "    color:" + textColor + ";\n" +
+                "}\n" +
+                "a:link {color:" + accentColor + "}\n" +
+                "</style>" +
+                about;
+        webView.setBackgroundColor(Color.TRANSPARENT);
+        webView.loadData(about, "text/html", "UTF-8");
+        alert.setView(webView, 32, 0, 32, 0);
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+        alert.show();
     }
 
     @Override
