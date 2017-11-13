@@ -14,35 +14,61 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements LocationListener{
 
     boolean bandGPS = false;
     boolean bandRED = false;
 
-
     private double latActual, lonActual;
     private double latMarca, lonMarca;
     private LocationManager locationManager;
-    //private LatLng ubiActual;
+
+    private ArrayList<Clima> climas;
+    private PostRVAdapter mPostRVAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        climas = new ArrayList<Clima>();
         if(!runtime_permissions()) {
 
             getGeoLocation();
             Toast.makeText(this, "Ubicacion: " + latActual + " " + lonActual, Toast.LENGTH_SHORT).show();
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+            mPostRVAdapter = new PostRVAdapter(this, climas);
+            recyclerView.setAdapter(mPostRVAdapter);
+            loadFakePosts();
+
         }else{
             Toast.makeText(this, "Habilita los Permisos Prro", Toast.LENGTH_SHORT).show();
         }
     }
+    public void loadFakePosts() {
+        for (int i = 0; i < 10; i++) {
+            Clima clima = new Clima();
+            clima.setDt_txt("Title");
+            clima.setTemp_max(10.00);
+            clima.setTemp_min(5.00);
+            clima.setName("Celaya");
+            climas.add(clima);
+        }
+        mPostRVAdapter.notifyDataSetChanged();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -138,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
                 about;
         webView.setBackgroundColor(Color.TRANSPARENT);
         webView.loadData(about, "text/html", "UTF-8");
-        alert.setView(webView, 32, 0, 32, 0);
+        //alert.setView(webView, 32, 0, 32, 0);
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 

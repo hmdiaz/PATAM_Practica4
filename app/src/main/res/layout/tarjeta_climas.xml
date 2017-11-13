@@ -26,9 +26,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_fecha"
+            android:id="@+id/txt_city"
             android:layout_toRightOf="@+id/img_logo"
             android:layout_alignParentTop="true"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_fecha"
+            android:layout_toRightOf="@+id/img_logo"
+            android:layout_below="@+id/txt_city"
             android:textSize="20sp"
             />
         <TextView
@@ -49,15 +58,6 @@
             android:id="@+id/txt_descripcion"
             android:layout_toRightOf="@+id/img_logo"
             android:layout_below="@+id/txt_tempMin"/>
-        <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/txt_ciudad"
-        android:layout_toRightOf="@+id/img_logo"
-        android:layout_below="@+id/txt_descripcion"/>
+
     </RelativeLayout>
-
-
-
-
 </android.support.v7.widget.CardView>
