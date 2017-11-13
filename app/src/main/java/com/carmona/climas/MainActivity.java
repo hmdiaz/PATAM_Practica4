@@ -22,51 +22,63 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-public class MainActivity extends AppCompatActivity implements LocationListener{
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class MainActivity extends AppCompatActivity implements LocationListener, PostRVAdapter.PostRVAdapterListener, Callback<Climas>{
 
     boolean bandGPS = false;
     boolean bandRED = false;
+
+    private static final String TAG = "MainActivity";
 
     private double latActual, lonActual;
     private double latMarca, lonMarca;
     private LocationManager locationManager;
 
-    private ArrayList<Clima> climas;
+    private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
+    private String URL="";
+    private ArrayList<com.carmona.climas.List> climas;
+    private String city;
     private PostRVAdapter mPostRVAdapter;
+
+    private static final String appid="e838902b2803dd3fe762d8600ddb3d22";
+    private static final String units="metric";
+    private static final String lang="es";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        climas = new ArrayList<Clima>();
+        climas = new ArrayList<com.carmona.climas.List>();
+        city = "";
         if(!runtime_permissions()) {
 
             getGeoLocation();
             Toast.makeText(this, "Ubicacion: " + latActual + " " + lonActual, Toast.LENGTH_SHORT).show();
+            URL="?lat="+latActual+"&lon="+lonActual;
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
             mPostRVAdapter = new PostRVAdapter(this, climas);
             recyclerView.setAdapter(mPostRVAdapter);
-            loadFakePosts();
+            //loadFakePosts();
+            loadPosts();
 
         }else{
             Toast.makeText(this, "Habilita los Permisos Prro", Toast.LENGTH_SHORT).show();
         }
-    }
-    public void loadFakePosts() {
-        for (int i = 0; i < 10; i++) {
-            Clima clima = new Clima();
-            clima.setDt_txt("Title");
-            clima.setTemp_max(10.00);
-            clima.setTemp_min(5.00);
-            clima.setName("Celaya");
-            climas.add(clima);
-        }
-        mPostRVAdapter.notifyDataSetChanged();
     }
 
 
@@ -173,6 +185,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         alert.show();
     }
 
+    public void loadPosts() {
+        Gson gson = new GsonBuilder().setLenient().create();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        JsonPlaceHolderAPI jsonPlaceHolderAPI = retrofit.create(JsonPlaceHolderAPI.class);
+        Call<Climas> call = jsonPlaceHolderAPI.getClimas(latActual,lonActual,appid,units,lang);
+        call.enqueue(this);
+    }
+
     @Override
     public void onLocationChanged(Location location) {
 
@@ -190,6 +214,44 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
 
     @Override
     public void onProviderDisabled(String s) {
+
+    }
+
+
+
+    @Override
+    public void onResponse(Call<Climas> call, Response<Climas> response) {
+        if(response.isSuccessful()) {
+            Log.d(TAG, "onResponse: Server Response: " + response.toString());
+            Log.d(TAG, "onResponse: received information: " + response.body().getList());
+            Log.d(TAG, "onResponse: received information: " + response.body().getCity().getName());
+
+            List<com.carmona.climas.List> climasList = (List<com.carmona.climas.List>) response.body().getList();
+
+            city = response.body().getCity().getName();
+
+            climas.clear();
+
+            for (com.carmona.climas.List list : climasList) {
+                climas.add(list);
+            }
+
+            mPostRVAdapter.notifyDataSetChanged();
+        } else {
+            System.out.println(response.errorBody());
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Climas> call, Throwable t) {
+        Log.e(TAG, "onFailure: Something went wrong: " + t.getMessage() );
+        Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        t.printStackTrace();
+    }
+
+
+    @Override
+    public void OnItemClicked(Climas aPost) {
 
     }
 }

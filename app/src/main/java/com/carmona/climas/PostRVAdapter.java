@@ -12,14 +12,14 @@ import java.util.ArrayList;
 
 
 public class PostRVAdapter extends RecyclerView.Adapter<PostRVAdapter.ViewHolder> {
-    private ArrayList<Clima> mDataset;
+    private ArrayList<List> mDataset;
     private Context mContext;
 
     public interface PostRVAdapterListener{
-        void OnItemClicked(Clima aPost);
+        void OnItemClicked(Climas aPost);
     }
 
-    public PostRVAdapter(Context context, ArrayList<Clima> climas){
+    public PostRVAdapter(Context context, ArrayList<List> climas){
         mDataset = climas;
         mContext = context;
     }
@@ -32,13 +32,19 @@ public class PostRVAdapter extends RecyclerView.Adapter<PostRVAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Clima aClima = mDataset.get(position);
+        //final Clima aClima = mDataset.get(position);
 
-        holder.txt_fecha.setText(aClima.getDt_txt());
+        final List aClimas = mDataset.get(position);
+
+        //final City city  = mDataset2.getName();
+        /*holder.txt_fecha.setText(aClima.getDt_txt());
         holder.txt_tempMax.setText(""+aClima.getTemp_max());
         holder.txt_tempMin.setText(""+aClima.getTemp_min());
-        holder.txt_descripcion.setText(""+aClima.getDescription());
-        holder.txt_city.setText(""+aClima.getName());
+        holder.txt_descripcion.setText(""+aClima.getDescription());*/
+        holder.txt_fecha.setText("Fecha:"+aClimas.getDtTxt());
+        holder.txt_tempMax.setText("Temp Max: "+aClimas.getMain().getTempMax());
+        holder.txt_tempMin.setText("Temp Min:"+aClimas.getMain().getTempMin());
+        holder.txt_descripcion.setText("Tipo: "+aClimas.getWeather().get(0).getDescription());
 
         /*holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
