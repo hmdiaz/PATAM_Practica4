@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if(response.isSuccessful()) {
             Log.d(TAG, "onResponse: Server Response: " + response.toString());
             Log.d(TAG, "onResponse: received information: " + response.body().getList());
-            Log.d(TAG, "onResponse: received information: " + response.body().getCity().getName());
+            Log.d(TAG, "onResponse: received information: " + response.body().getList().get(0).getWeather().get(0).getIcon());
 
             List<com.carmona.climas.List> climasList = (List<com.carmona.climas.List>) response.body().getList();
 

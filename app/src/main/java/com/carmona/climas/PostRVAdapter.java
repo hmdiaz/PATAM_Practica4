@@ -1,19 +1,27 @@
 package com.carmona.climas;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 
 public class PostRVAdapter extends RecyclerView.Adapter<PostRVAdapter.ViewHolder> {
     private ArrayList<List> mDataset;
     private Context mContext;
+    private  String URL_IMG="http://openweathermap.org/img/w/";
 
     public interface PostRVAdapterListener{
         void OnItemClicked(Climas aPost);
@@ -45,6 +53,8 @@ public class PostRVAdapter extends RecyclerView.Adapter<PostRVAdapter.ViewHolder
         holder.txt_tempMax.setText("Temp Max: "+aClimas.getMain().getTempMax());
         holder.txt_tempMin.setText("Temp Min:"+aClimas.getMain().getTempMin());
         holder.txt_descripcion.setText("Tipo: "+aClimas.getWeather().get(0).getDescription());
+        //System.out.println(URL_IMG+aClimas.getWeather().get(0).getIcon());
+        Picasso.with(mContext).load(URL_IMG+aClimas.getWeather().get(0).getIcon()+".png").into(holder.img_logo);
 
         /*holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +73,7 @@ public class PostRVAdapter extends RecyclerView.Adapter<PostRVAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         View rootView;
+        ImageView img_logo;
         TextView txt_fecha;
         TextView txt_tempMin;
         TextView txt_tempMax;
@@ -76,6 +87,7 @@ public class PostRVAdapter extends RecyclerView.Adapter<PostRVAdapter.ViewHolder
             txt_tempMax = (TextView) itemView.findViewById(R.id.txt_tempMax);
             txt_descripcion = (TextView) itemView.findViewById(R.id.txt_descripcion);
             txt_city = (TextView) itemView.findViewById(R.id.txt_city);
+            img_logo = (ImageView) itemView.findViewById(R.id.img_logo);
         }
     }
 }
